@@ -12,6 +12,7 @@ pub const TokenTag = enum {
 pub const Attribute = struct {
     key: []u8,
     value: []u8,
+    const Self = @This();
 };
 
 pub const DocType = struct {
@@ -34,15 +35,31 @@ pub const DocType = struct {
             allocator.free(system_identifier);
         }
     }
+
+    pub fn format(self: *const Self, comptime fmt: []const u8, options: std.fmt.FormatOptions, writer: anytype) !void {
+        _ = options;
+        if (fmt.len != 0) {
+            unreachable;
+        }
+        return std.fmt.format(writer, "DocType{{.name = {?s}, .public_identifier={?s}, .system_identifier={?s}, .force_quick={} }}", self.*);
+    }
 };
 
 pub const Tag = struct {
     is_opening: bool,
     name: []const u8,
-    self_closing: bool,
+    is_self_closing: bool,
     attributes: std.ArrayListUnmanaged(Attribute),
 
     const Self = @This();
+
+    pub fn format(self: *const Self, comptime fmt: []const u8, options: std.fmt.FormatOptions, writer: anytype) !void {
+        _ = options;
+        if (fmt.len != 0) {
+            unreachable;
+        }
+        return std.fmt.format(writer, "Token{{.name = {s}, .attributes={}, .is_self_closing={}, .is_opening={} }}", .{ self.name, self.attributes, self.is_self_closing, self.is_opening });
+    }
 
     pub fn deinit(self: *Self, allocator: Allocator) void {
         allocator.free(self.name);
