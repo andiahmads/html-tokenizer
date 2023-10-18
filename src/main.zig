@@ -17,5 +17,5 @@ pub fn main() !void {
     std.debug.print("{s}\n", .{html_source});
 
     var tokenizer = mod_tokenizer.Tokenizer.new(html_source);
-    std.debug.print("{?}\n", .{tokenizer.step()});
+    tokenizer.step(allocator);
 }

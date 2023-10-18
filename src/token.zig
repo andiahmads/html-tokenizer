@@ -2,17 +2,16 @@ const std = @import("std");
 const Allocator = std.mem.Allocator;
 
 pub const TokenTag = enum {
-    DocType,
-    Tag,
-    Comment,
-    Character,
-    EndOfFile,
+    doctype,
+    tag,
+    comment,
+    character,
+    end_of_file,
 };
 
 pub const Attribute = struct {
     key: []u8,
     value: []u8,
-    const Self = @This();
 };
 
 pub const DocType = struct {
@@ -68,18 +67,18 @@ pub const Tag = struct {
 };
 
 pub const Token = union(TokenTag) {
-    DocType: DocType,
-    Tag: Tag,
-    Comment: []u8,
-    Character: []u8,
-    EndOfFile: void,
+    doctype: DocType,
+    tag: Tag,
+    comment: []u8,
+    character: u8,
+    end_of_file: void,
 
     const Self = @This();
     pub fn deinit(self: *Self, allocator: Allocator) void {
         switch (self.*) {
-            TokenTag.DocType => |doctype| doctype.deinit(allocator),
-            TokenTag.Tag => self.Tag.deinit(allocator),
-            TokenTag.Comment => |comment| allocator.free(comment),
+            TokenTag.doctype => |doctype| doctype.deinit(allocator),
+            TokenTag.tag => self.tag.deinit(allocator),
+            TokenTag.comment => |comment| allocator.free(comment),
             else => {},
         }
     }
